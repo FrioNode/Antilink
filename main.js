@@ -35,18 +35,22 @@ async function authenticateBot() {
         printQRInTerminal: true
     });
 
-    Bloom.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update;
-        if (connection === 'close') {
-            const reason = lastDisconnect?.error?.output?.statusCode;
-            if (reason !== DisconnectReason.loggedOut) {
-                console.log('⚠️ Reconnecting...');
-                authenticateBot();
-            }
-        } else if (connection === 'open') {
-            console.log('✅ Bot is online');
+Bloom.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect, qr } = update;
+
+    if (connection === 'close') {
+        const reason = lastDisconnect?.error?.output?.statusCode;
+        if (reason !== DisconnectReason.loggedOut) {
+            console.log('⚠️ Reconnecting...');
+            authenticateBot();
         }
-    });
+    } else if (connection === 'open') {
+        console.log('✅ Bot is online');
+    } else if (connection === 'qr') {
+        console.log('📱 Scan the QR code below to log in:');
+        console.log(qr);  // Log the QR code to the terminal
+    }
+});
 
     Bloom.ev.on('creds.update', saveCreds);
     return Bloom;
