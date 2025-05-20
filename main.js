@@ -32,25 +32,25 @@ async function authenticateBot() {
     const Bloom = makeWASocket({
         auth: state,
         logger: pino({ level: 'silent' }),
-        printQRInTerminal: true
+        // Removed printQRInTerminal option here
     });
 
-Bloom.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect, qr } = update;
+    Bloom.ev.on('connection.update', async (update) => {
+        const { connection, lastDisconnect, qr } = update;
 
-    if (connection === 'close') {
-        const reason = lastDisconnect?.error?.output?.statusCode;
-        if (reason !== DisconnectReason.loggedOut) {
-            console.log('⚠️ Reconnecting...');
-            authenticateBot();
+        if (connection === 'close') {
+            const reason = lastDisconnect?.error?.output?.statusCode;
+            if (reason !== DisconnectReason.loggedOut) {
+                console.log('⚠️ Reconnecting...');
+                authenticateBot();
+            }
+        } else if (connection === 'open') {
+            console.log('✅ Bot is online');
+        } else if (connection === 'qr') {
+            console.log('📱 Scan the QR code below to log in:');
+            console.log(qr);  // Log the QR code to the terminal for manual scanning
         }
-    } else if (connection === 'open') {
-        console.log('✅ Bot is online');
-    } else if (connection === 'qr') {
-        console.log('📱 Scan the QR code below to log in:');
-        console.log(qr);  // Log the QR code to the terminal
-    }
-});
+    });
 
     Bloom.ev.on('creds.update', saveCreds);
     return Bloom;
