@@ -13,8 +13,9 @@ Just a quick antink module
   ```npm install mongoose baileys pino```
   
 - setup mongoDB
-  get mongo uri at mongodb.com or host your localy, then
-  create a ```.env``` file in root dir and add your mongo
+  get mongo uri at mongodb.com or host your localy,
+  
+  Create a ```.env``` file in root dir and add your mongo
   
   ```MONGO=mongo_uri_here```
   
